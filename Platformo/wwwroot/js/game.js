@@ -3,11 +3,13 @@ let floorGroup
 let ground 
 
 function setup() {
-    createCanvas(400, 400);
+	let container = select("#game-container");
+	let cnv = createCanvas(container.elt.clientWidth, 400);
+	cnv.parent(container);
     world.gravity.y = 10;
 	floorGroup = new Group();
 	floorGroup.collider = "k";
-	ground = new floorGroup.Sprite(width / 2, width - 10, width, 10);
+	ground = new floorGroup.Sprite(width / 2, height - 10, width, 10);
 
 	grass = new floorGroup.Group();
 	grass.w = 100
@@ -40,6 +42,9 @@ function setup() {
 function draw() {
     clear();
 	background(0);
+	if (player.x > width / 2) {
+		camera.x = player.x;
+	}
 
 	if (kb.released(" ") && player.vel.y === 0) {
 		player.bearing = -90;

@@ -20,3 +20,46 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+#game-container {
+    width: 100%;
+    min-width: 100%;
+    margin-bottom: 20px;
+}
+
+#comments-section {
+    width: 100%;
+}
+
+#comment-field {
+    display: flex;
+}
+
+#comment-submit {
+    margin-left: 20px;
+    width: 15%;
+    height: 50px;
+    display: inline;
+    background-color: white;
+    outline: none;
+    border-radius: 0.25rem;
+    border: 2px solid #EEE;
+    padding: 5px;
+    transition: 200ms;
+}
+
+#comment-submit:hover {
+    box-shadow: 0 2px 10px #00000090;
+}
+
+#comments-container {
+    margin-top: 20px;
+}
+
+.comment {
+    border-radius: 8px;
+    border: 2px solid #EEE;
+    width: 80%;
+    padding: 10px;
+    margin-bottom: 10px;
+}

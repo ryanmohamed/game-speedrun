@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Platformo.Data;
+using Platformo.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +14,8 @@ builder.Services.AddDbContext<ApplicationContext>((options =>
         builder.Configuration.GetConnectionString("DefaultConnection")
     )
 ));
+
+builder.Services.AddSignalR();
 
 var app = builder.Build();
 
@@ -34,6 +37,8 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+app.MapHub<CommentHub>("/CommentHub");
 
 app.Run();
 

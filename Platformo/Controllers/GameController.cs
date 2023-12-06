@@ -3,17 +3,21 @@ using Microsoft.AspNetCore.Mvc;
 using Platformo.Data;
 using Platformo.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.SignalR;
+using Platformo.Hubs;
 
 namespace Platformo.Controllers;
 
 public class GameController : Controller
 {
     private readonly ApplicationContext _db;
+    private readonly IHubContext<CommentHub> _hubContext;
     private readonly ILogger<GameController> _logger;
 
-    public GameController(ApplicationContext db, ILogger<GameController> logger)
+    public GameController(ApplicationContext db, IHubContext<CommentHub> hubContext, ILogger<GameController> logger)
     {
         _db = db;
+        _hubContext = hubContext;
         _logger = logger;
     }
 
@@ -23,27 +27,39 @@ public class GameController : Controller
         Game samuraiSundown = _db.Games.Include("Comments").First(); // one game for now
         return View(samuraiSundown);
     }
-        
-    [HttpPost]
-    public IActionResult CreateComment ([FromBody] AddCommentModel addComment)
+
+    public IActionResult GetComments(Guid id)
     {
-        Game? game = _db.Games.Where(u => u.Id == addComment.GameId).Include("Comments").FirstOrDefault();
-        Console.WriteLine(game.Id);
+        Game? game = _db.Games.Where(u => u.Id == id).Include("Comments").FirstOrDefault();
+        if (game == null)
+        {
+            return NotFound();
+        }
+        return PartialView("_CommentsPartial", game.Comments);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> CreateComment ([FromBody] AddCommentModel addComment)
+    {
+        Game? game = await _db.Games.Where(u => u.Id == addComment.GameId).Include("Comments").FirstOrDefaultAsync();
         if (game == null)
         {
             return NotFound();
         }
 
-        game.Comments.Add(new Comment
-        { 
+        Comment newComment = new Comment
+        {
             Content = addComment.Comment,
             CreatedAt = DateTime.Now,
             UpdatedAt = DateTime.Now,
             Game = game
-        });
+        };
+
+        game.Comments.Add(newComment);
 
         _db.Games.Update(game);
         _db.SaveChanges();
+        await _hubContext.Clients.All.SendAsync("Update");
 
         return Ok();
     }

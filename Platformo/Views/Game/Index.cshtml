@@ -4,16 +4,33 @@
     <script src="https://cdn.jsdelivr.net/npm/p5@1/lib/addons/p5.sound.min.js"></script>
     <script src="https://p5play.org/v3/planck.min.js"></script>
     <script src="https://p5play.org/v3/p5play.js"></script>
-    <script src="~/js/game.js"></script>
+    <script src="~/js/game.js" defer></script>
+    <script defer>tinymce.init({
+            selector: 'textarea',
+            plugins: 'anchor autolink charmap codesample emoticons link lists searchreplace visualblocks wordcount',
+            toolbar: 'undo redo | fontsize | bold italic underline strikethrough | numlist bullist | emoticons',
+            min_height: 200,
+            max_height: 300,
+            width: "80%"
+    
+    });
+    </script>
     <script src="~/js/comments.js" defer></script>
 }
 
 <h1>@Model.Name</h1>
 
-<textarea id="comment-content" name="comment" placeholder="Share your thoughts and leave a comment!"></textarea>
-<button data-id="@Model.Id" id="comment-submit" style="display:block;">Submit</button>
 
-@foreach (var comment in Model.Comments.ToList().OrderBy(u => u.UpdatedAt))
-{
-        <p>@comment.Content</p>
-}
+<div id="game-container"></div>
+
+<section id="comments-section">
+    <div style="margin-bottom: 20px;">
+        <h2> Comments </h2>
+        <p> Share your thoughts, comment below. </p>
+    </div>
+    <div id="comment-field">
+        <textarea id="comment-content" name="comment" placeholder="Share your thoughts and leave a comment!"></textarea>
+        <button data-id="@Model.Id" id="comment-submit">Post Comment</button>
+    </div>
+    <div id="comments-container">Loading comments...</div>
+</section>

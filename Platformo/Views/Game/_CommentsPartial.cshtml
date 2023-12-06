@@ -1,0 +1,9 @@
+﻿@model IEnumerable<Comment>
+
+@foreach (var comment in Model.OrderByDescending(u=>u.UpdatedAt))
+{
+        <div class="comment">
+            <div>@Html.Raw(comment.Content)</div>
+            <small>Posted @comment.CreatedAt.ToShortDateString()</small>
+        </div>
+}
